@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### ✨ New Features
+
+- `MOD3`: the exact-check guidance now covers both `import` and dotted
+  `using Pkg.Sub` forms. Repository guards may use one aggregate assertion, but
+  must report every violation with its file path, line number and source text.
+
 ## [0.5.0] - 2026-10-15
 
 ### ✨ New Features
@@ -33,7 +39,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Notes on the VitePress backend: tables are right-aligned unless the separator row
   says otherwise; an `@example` block that returns a value does not show what it
   printed.
-
 ## [0.4.0] - 2026-10-15
 
 ### ✨ New Features
