@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-10-18
+
+### ✨ New Features
+
+- `REL1`–`REL6`, a new rule file [`rules/release.md`](rules/release.md): version
+  numbers follow SemVer as Pkg reads it (the leftmost non-zero component is the breaking
+  one, so `0.Y.Z` bumps `Y` for a breaking change); a beta takes the `-beta` suffix and
+  a triple never used before, and a stable never takes the triple of a beta; a version
+  jump in General is allowed only when betas explain it, and approved with
+  `[merge approved]`; a stable release resolves from General alone; version, tag,
+  registry and GitHub release agree, the notes of a stable covering the changes since
+  the previous stable; the registration bot is mentioned exactly once, in one comment
+  of the release issue.
+
 ## [0.6.0] - 2026-10-18
 
 ### ✨ New Features
