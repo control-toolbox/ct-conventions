@@ -109,10 +109,15 @@ This follows [Blue Style](https://github.com/invenia/BlueStyle#module-imports), 
 prefers `using` over `import` "to ensure that extension of a function is always explicit
 and on purpose"; the ecosystem rule additionally drops Blue Style's `import` escape hatch.
 
-**Check.** `exact` (to be tooled, syntactic). Measure meanwhile:
+**Check.** `exact` when implemented by a repository guard: scan every tracked
+source, test and documentation file, reject each forbidden line, and report every
+violation with its file path, line number and source text. A guard may aggregate
+the result into one test assertion, but it must preserve the per-line diagnostics.
+Measure meanwhile:
 
 ```bash
-grep -rnE '^\s*import\s' --include='*.jl' src ext test docs
+grep -rnE '^\s*import\s|^\s*using\s+[A-Za-z_][A-Za-z_0-9]*\.' \
+  --include='*.jl' --include='*.md' src ext test docs
 ```
 
 ---

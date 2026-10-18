@@ -7,13 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.5.1] - 2026-10-15
+### ✨ New Features
+
+- `MOD3`: the exact-check guidance now covers both `import` and dotted
+  `using Pkg.Sub` forms. Repository guards may use one aggregate assertion, but
+  must report every violation with its file path, line number and source text.
 
 ### 📚 Documentation
 
 - `SITE15`, `SITE16`: the helpers are now in CTBase (≥ 0.30.10),
   `CTBase.DevTools.repl_without_extensions` and `CTBase.DevTools.warnings_without_paths`,
   instead of CTSolvers' `docs/noext.jl` and `docs/doclogs.jl`.
+
+## [0.5.1] - 2026-10-15
 
 ## [0.5.0] - 2026-10-15
 
@@ -41,7 +47,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Notes on the VitePress backend: tables are right-aligned unless the separator row
   says otherwise; an `@example` block that returns a value does not show what it
   printed.
-
 ## [0.4.0] - 2026-10-15
 
 ### ✨ New Features
