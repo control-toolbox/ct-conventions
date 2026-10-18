@@ -62,7 +62,7 @@ examples stay generic (no package-specific symbols).
    `@inferred` and allocation guards, on the hot path only. → `TYP8`, `PERF1`–`PERF6`
 8. **Everything is documented.** A docstring on every symbol, fixed templates,
    safe examples. → `DOC1`–`DOC8`
-9. **Tests: module + callable function + everything qualified.** → `TST1`–`TST7`
+9. **Tests: module + callable function + everything qualified.** → `TST1`–`TST8`
 10. **Auto-generated API docs, public *and* private; guides separate.**
     → `SITE1`–`SITE17`
 

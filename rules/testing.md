@@ -3,7 +3,7 @@
 How tests are structured and written. Generic examples. For *running* tests, see
 [`method.md`](../method.md).
 
-Identifiers: `TST1`–`TST7` (see [`README.md`](../README.md#rule-identifiers)).
+Identifiers: `TST1`–`TST8` (see [`README.md`](../README.md#rule-identifiers)).
 
 Tests are **contract-first** (define and test interfaces with fakes/stubs to verify
 routing and behavior; test public APIs and the internal logic that matters),
@@ -224,3 +224,36 @@ state passes or fails by accident of order.
 
 **Check.** `heuristic` (to be tooled) for weak assertions (`> 0`, `!= nothing`) and
 `@inferred` on a field access; independence is a `judgment`.
+
+---
+
+## TST8 — Extensions are checked for piracy and ambiguities
+
+**Rule.** `Aqua.test_all(Pkg)` never inspects a package extension: an extension is a
+separate module, not a submodule, so Aqua's piracy hunt and ambiguity detection skip it.
+Every extension of a package is therefore checked for **type piracy** and **method
+ambiguities**, with the parent package's functions and types treated as owned (a naive
+`Aqua.test_piracies(ext)` flags the normal pattern `Pkg.f(::Pkg.Tag, ::WeakDepType)`).
+Piracy an extension needs by design (glue for a type the package does not own) is listed
+explicitly in the test, with the reason, so that any new pirated method fails.
+
+One shared helper, `CTBase.DevTools.test_extensions_quality(pkg; allowed_piracies)`
+(CTBase extension `CTBaseAqua`, triggered by `Aqua` and `Test`), is called from each
+package's Aqua test file. It iterates over the `[extensions]` of `pkg`, asserts each one
+is loaded (a missing trigger fails loudly, as in [`TST6`](#tst6--capability-gated-tests-skip-visibly)),
+and runs both checks.
+
+```julia
+# test/suite/meta/test_code_quality.jl
+CTBase.DevTools.test_extensions_quality(MyPkg; allowed_piracies=Dict(
+    "MyPkgMakie" => ["Makie.plot(::MyPkg.Solution): ports the plotting entry point"],
+))
+```
+
+**Why.** An extension is loaded in the user's session whenever its triggers are; its
+methods change dispatch for everyone, and an ambiguity it introduces is a `MethodError`
+at a call site far from the extension.
+
+**Check.** `exact`: the shared helper fails on any extension that is not loaded, on any
+pirated method not listed in `allowed_piracies`, and on any ambiguity involving one of
+its methods.
