@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-10-18
+
+### ✨ New Features
+
+- `TST8`: every package extension is checked for type piracy and method ambiguities
+  (`Aqua.test_all` skips extensions), with the parent package treated as owned and
+  by-design piracy listed explicitly. The shared helper is
+  `CTBase.DevTools.test_extensions_quality`, provided by the `CTBaseAqua` extension.
+
 ## [0.5.2] - 2026-10-18
 
 ### ✨ New Features
