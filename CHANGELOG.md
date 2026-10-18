@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### ✨ New Features
 
-- `REL1`–`REL6`, a new rule file [`rules/release.md`](rules/release.md): version
+- `REL1`–`REL7`, a new rule file [`rules/release.md`](rules/release.md): version
   numbers follow SemVer as Pkg reads it (the leftmost non-zero component is the breaking
   one, so `0.Y.Z` bumps `Y` for a breaking change); a beta takes the `-beta` suffix and
   a triple never used before, and a stable never takes the triple of a beta; a version
@@ -19,7 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `[merge approved]`; a stable release resolves from General alone; version, tag,
   registry and GitHub release agree, the notes of a stable covering the changes since
   the previous stable; the registration bot is mentioned exactly once, in one comment
-  of the release issue.
+  of the release issue; a release ships a change to what users get (code, `Project.toml`
+  or documentation), not tests or CI alone (`REL7`).
 
 ## [0.6.0] - 2026-10-18
 

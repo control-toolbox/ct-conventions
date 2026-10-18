@@ -6,7 +6,7 @@ the registries work is in
 [`ct-registry/RELEASING.md`](https://github.com/control-toolbox/ct-registry/blob/HEAD/RELEASING.md).
 For the changelog of a release, see [`changelog.md`](changelog.md).
 
-Identifiers: `REL1`–`REL6` (see [`README.md`](../README.md#rule-identifiers)).
+Identifiers: `REL1`–`REL7` (see [`README.md`](../README.md#rule-identifiers)).
 
 Two registries are involved: **General**, the public Julia registry, holds the stable
 releases; **ct-registry**, the private registry of the organization, holds the betas.
@@ -36,6 +36,10 @@ breaking change released as a patch is installed silently by every dependent pac
 
 **Check.** `judgment`: whether a change is breaking. `exact` (to be tooled): a release
 whose changelog entry has a `💥 Breaking Changes` section bumps the breaking component.
+`heuristic`: the breakage tests of the release, on the **stable** column (the last release
+of each dependent package): a dependent that passes on the base and fails with the release
+is broken by it, so the version is breaking. A dependent that already fails on the base
+says nothing about the release.
 
 ---
 
@@ -127,3 +131,27 @@ its description is registered before its notes are final.
 
 **Check.** `exact`: the release issue, description and comments, contains one mention,
 in a comment.
+
+---
+
+## REL7 — A release ships a change to what users get
+
+**Rule.** Since the previous release of the same kind — the last stable for a stable, the
+last release for a beta — the release changes what a user of the package gets:
+
+| Changed | A release? |
+| --- | --- |
+| `src/`, `ext/` (code and docstrings) | yes |
+| `Project.toml`: dependencies, `[compat]`, extensions | yes |
+| `docs/` | yes: the documentation of the stable version is built from its tag |
+| `test/`, `.github/`, repository files (`.gitignore`, `_typos.toml`, …) only | no |
+| `CHANGELOG.md`, `BREAKING.md` only | no |
+
+A stable that follows betas with no change since the last beta is a release: it is
+compared with the last stable.
+
+**Why.** A release that ships nothing new registers a second version of the same package,
+and makes every dependent re-resolve for nothing.
+
+**Check.** `exact` (to be tooled): the files changed between the tag of the previous
+release of the same kind and the release commit.

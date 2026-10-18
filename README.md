@@ -68,7 +68,7 @@ examples stay generic (no package-specific symbols).
     → `SITE1`–`SITE17`
 11. **A release is a new number that Pkg reads right.** SemVer from the leftmost
     non-zero component, betas on fresh numbers, a stable resolvable from General
-    alone, registered once. → `REL1`–`REL6`
+    alone, registered once, and only when it ships something. → `REL1`–`REL7`
 
 ---
 
