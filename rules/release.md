@@ -3,7 +3,7 @@
 What a correct release is: its version number, its betas, its registration. How to make
 one is a procedure, in [`ct-agents`](https://github.com/control-toolbox/ct-agents); how
 the registries work is in
-[`ct-registry/RELEASING.md`](https://github.com/control-toolbox/ct-registry/blob/main/RELEASING.md).
+[`ct-registry/RELEASING.md`](https://github.com/control-toolbox/ct-registry/blob/HEAD/RELEASING.md).
 For the changelog of a release, see [`changelog.md`](changelog.md).
 
 Identifiers: `REL1`–`REL6` (see [`README.md`](../README.md#rule-identifiers)).
