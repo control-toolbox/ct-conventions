@@ -33,6 +33,7 @@ examples stay generic (no package-specific symbols).
    | [`rules/testing.md`](rules/testing.md) | `TST` | test file template, fakes, categories |
    | [`rules/site.md`](rules/site.md) | `SITE` | documentation site, API generation, guides |
    | [`rules/changelog.md`](rules/changelog.md) | `CHG` | `CHANGELOG.md` and `BREAKING.md` |
+   | [`rules/release.md`](rules/release.md) | `REL` | version numbers, betas, registration |
 
 3. **[`method.md`](method.md)** — how to work: running tests, coverage,
    building the docs, capturing output.
@@ -65,6 +66,9 @@ examples stay generic (no package-specific symbols).
 9. **Tests: module + callable function + everything qualified.** → `TST1`–`TST8`
 10. **Auto-generated API docs, public *and* private; guides separate.**
     → `SITE1`–`SITE17`
+11. **A release is a new number that Pkg reads right.** SemVer from the leftmost
+    non-zero component, betas on fresh numbers, a stable resolvable from General
+    alone, registered once, and only when it ships something. → `REL1`–`REL7`
 
 ---
 
