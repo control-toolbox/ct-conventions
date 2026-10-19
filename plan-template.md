@@ -117,7 +117,7 @@ grep -E "Error|Fail|Test Summary" /tmp/<branch>_final.log
 ## Rules for filling in the template
 
 **Conventions line** — the first line under the title states the ct-conventions version
-the plan applies (`git -C .conventions describe --tags --always`), so that the rule
+the plan applies (`git -C .ct-conventions describe --tags --always`), so that the rule
 identifiers it cites stay readable later. Cite rules by identifier (`MOD3`, `TST1`), and
 write the plan in English ([`GEN1`](rules/general.md#gen1--english-everywhere)).
 

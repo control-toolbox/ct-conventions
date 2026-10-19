@@ -116,7 +116,7 @@ Conventions: ct-conventions v0.3.1 (commit 1a2b3c4)
 ```
 
 ```bash
-git -C .conventions describe --tags --always
+git -C .ct-conventions describe --tags --always
 ```
 
 ---
@@ -124,13 +124,13 @@ git -C .conventions describe --tags --always
 ## Using the conventions in a package
 
 A package pins a release tag in its `AGENTS.md` ("Pinned version: ct-conventions
-vX.Y.Z") and reads the rules from a local clone at that tag, in `.conventions/`, which
+vX.Y.Z") and reads the rules from a local clone at that tag, in `.ct-conventions/`, which
 it lists in `.gitignore`:
 
 ```bash
-rm -rf .conventions
+rm -rf .ct-conventions
 git -c advice.detachedHead=false clone --quiet --depth 1 --branch vX.Y.Z \
-  https://github.com/control-toolbox/ct-conventions.git .conventions
+  https://github.com/control-toolbox/ct-conventions.git .ct-conventions
 ```
 
 To bump the conventions, change the tag in `AGENTS.md` and clone again.

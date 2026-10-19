@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.1] - 2026-10-19
+
+### 📚 Documentation
+
+- The local clone of the conventions in a package is named `.ct-conventions/` instead of
+  `.conventions/`, to match `.ct-agents/`, the clone of
+  [ct-agents](https://github.com/control-toolbox/ct-agents) a package pins the same way.
+  Rewording only: no rule changes, and no identifier either. A package that bumps to
+  `v0.7.1` renames the directory (`mv .conventions .ct-conventions`, or clone again) and
+  the entries in its `AGENTS.md`, `.gitignore` and `_typos.toml`; the `grep` of `GEN2` also
+  skips `.ct-agents`.
+
 ## [0.7.0] - 2026-10-18
 
 ### ✨ New Features

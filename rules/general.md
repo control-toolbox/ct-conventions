@@ -114,7 +114,7 @@ tool that lints it; it does not change `.markdownlint.json`.
 tracked `.md` file contains `markdownlint-disable`.
 
 ```bash
-grep -rln 'markdownlint-disable' --include='*.md' . --exclude-dir=.conventions
+grep -rln 'markdownlint-disable' --include='*.md' . --exclude-dir=.ct-conventions --exclude-dir=.ct-agents
 ```
 
 ---
