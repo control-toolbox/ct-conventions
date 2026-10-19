@@ -121,7 +121,8 @@ release agree.
 
 **Rule.** For a stable release, the JuliaRegistrator bot is mentioned (an `@` followed by
 its name) **exactly once**: in one comment of the release issue, posted when the release
-is ready. It is never mentioned in an issue description, an issue template, a pull
+is ready — or, when `main` has moved past the release commit, in one comment on that
+commit, since the bot registers the head of `main` when asked on an issue. It is never mentioned in an issue description, an issue template, a pull
 request, a commit message, a GitHub release or a quote, and never for a beta. Prose that
 needs to refer to it says "the Registrator mention".
 
@@ -129,8 +130,8 @@ needs to refer to it says "the Registrator mention".
 block, and every reaction is a registration attempt: an issue opened with the mention in
 its description is registered before its notes are final.
 
-**Check.** `exact`: the release issue, description and comments, contains one mention,
-in a comment.
+**Check.** `exact`: the release issue and the release commit hold one mention, in a
+comment; no pull request mentions the bot, in its text or its commit messages.
 
 ---
 
