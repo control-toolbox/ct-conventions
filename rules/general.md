@@ -116,3 +116,21 @@ tracked `.md` file contains `markdownlint-disable`.
 ```bash
 grep -rln 'markdownlint-disable' --include='*.md' . --exclude-dir=.conventions
 ```
+
+---
+
+## GEN3 — Generated documentation has a source of truth
+
+**Rule.** Do not edit generated documentation directly. When a repository uses the
+`CTActions` UpdateReadme workflow, `README.md` and the generated
+`CONTRIBUTING.md` are outputs. Put package-specific README content in
+`README.template.md`; put content shared by the ecosystem in the corresponding
+source file in [`control-toolbox/.github`](https://github.com/control-toolbox/.github).
+Change the workflow only when the generation logic itself is wrong.
+
+**Why.** The next scheduled run overwrites direct edits to generated files, and
+parallel package-specific edits create drift. A single source keeps all generated
+READMEs consistent and lets the scheduled job propagate the change.
+
+**Check.** `judgment` - identify the generator and its inputs before editing a
+generated Markdown file.
