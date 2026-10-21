@@ -65,7 +65,7 @@ examples stay generic (no package-specific symbols).
    safe examples. → `DOC1`–`DOC8`
 9. **Tests: module + callable function + everything qualified.** → `TST1`–`TST8`
 10. **Auto-generated API docs, public *and* private; guides separate.**
-    → `SITE1`–`SITE17`
+    → `SITE1`–`SITE18`
 11. **A release is a new number that Pkg reads right.** SemVer from the leftmost
     non-zero component, betas on fresh numbers, a stable resolvable from General
     alone, registered once, and only when it ships something. → `REL1`–`REL7`
