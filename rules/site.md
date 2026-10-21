@@ -668,6 +668,33 @@ never failing the workflow) upgrades it with real device output.
 
 ---
 
+## SITE18 — `docs/make.jl` appends the repository root to `LOAD_PATH`
+
+**Rule.** `docs/make.jl` adds `docs/` and the repository root to `LOAD_PATH` with
+`push!`, never `pushfirst!`. The root is there only so that `using MyPackage` finds the
+local package; every shared dependency must come from `docs/Manifest.toml`.
+
+```julia
+# Append (not prepend): docs/Manifest.toml must win for shared deps; the repo root is only
+# needed to find the local package.
+push!(LOAD_PATH, joinpath(@__DIR__))
+push!(LOAD_PATH, joinpath(@__DIR__, ".."))
+```
+
+**Why.** With `pushfirst!`, the root environment shadows `docs/`. The two environments
+resolve the same packages differently, and a package is then loaded from an environment
+that does not match the one it was resolved against. Two failures seen in the ecosystem:
+GPUCompiler resolved against LLVM 9 (`docs/Manifest.toml`, forced by Enzyme) but loaded
+LLVM 10 from the root manifest and failed with `UndefVarError: IRBuilder` (CTSolvers);
+and an extension on a weak dependency installed only in `docs/` (StaticArrays) failed to
+precompile in `make.jl` with `Package StaticArrays is required but does not seem to be
+installed`, after precompiling fine during `Pkg.instantiate` (CTFlows). The failure
+appears only on a clean depot, so it can pass locally and break CI.
+
+**Check.** `exact` (to be tooled): `docs/make.jl` has no `pushfirst!(LOAD_PATH, ...)`.
+
+---
+
 ## Notes on the VitePress backend (no identifier)
 
 Know-how about the tool rather than conventions of the ecosystem. Migrating a package

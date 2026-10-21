@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### ✨ New Features
+
+- `SITE18`, `docs/make.jl` appends the repository root to `LOAD_PATH` (`push!`, never
+  `pushfirst!`), so that `docs/Manifest.toml` wins for shared dependencies. A root that
+  comes first broke GPUCompiler (CTSolvers) and the precompilation of an extension on a
+  weak dependency (CTFlows). Packages with a `pushfirst!(LOAD_PATH, ...)` in
+  `docs/make.jl` switch to `push!`.
+
 ## [0.7.1] - 2026-10-19
 
 ### 📚 Documentation
