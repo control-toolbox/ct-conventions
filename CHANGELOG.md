@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-10-23
+
 ### ✨ New Features
 
 - `SGN1`–`SGN6`, a new rule file [`rules/signs.md`](rules/signs.md): one sign convention
