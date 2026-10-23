@@ -34,6 +34,7 @@ examples stay generic (no package-specific symbols).
    | [`rules/site.md`](rules/site.md) | `SITE` | documentation site, API generation, guides |
    | [`rules/changelog.md`](rules/changelog.md) | `CHG` | `CHANGELOG.md` and `BREAKING.md` |
    | [`rules/release.md`](rules/release.md) | `REL` | version numbers, betas, registration |
+   | [`rules/signs.md`](rules/signs.md) | `SGN` | signs of multipliers, costate and duals |
 
 3. **[`method.md`](method.md)** — how to work: running tests, coverage,
    building the docs, capturing output.
@@ -69,6 +70,10 @@ examples stay generic (no package-specific symbols).
 11. **A release is a new number that Pkg reads right.** SemVer from the leftmost
     non-zero component, betas on fresh numbers, a stable resolvable from General
     alone, registered once, and only when it ships something. → `REL1`–`REL7`
+12. **A multiplier belongs to a constraint and to a problem.** `min f` and `max -f` have
+    the same multipliers; an inequality has a nonnegative multiplier however it is
+    written; the pseudo-Hamiltonian is always maximised, `p⁰` carrying the sense; direct
+    and indirect methods give the same duals. → `SGN1`–`SGN6`
 
 ---
 

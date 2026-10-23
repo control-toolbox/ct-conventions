@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### ✨ New Features
+
+- `SGN1`–`SGN6`, a new rule file [`rules/signs.md`](rules/signs.md): one sign convention
+  for the multipliers of the NLP solvers, the costate and multipliers of the maximum
+  principle, and the duals of an optimal control solution
+  ([OptimalControl.jl#1014](https://github.com/control-toolbox/OptimalControl.jl/discussions/1014)).
+  `min f` and `max -f` have the same multipliers; an inequality has a nonnegative
+  multiplier however it is written; equalities and two-sided constraints carry the signed
+  `y = μU − μL`; the pseudo-Hamiltonian `p·f + p⁰ℓ + μ·g` is always maximised, with
+  `p⁰ = −1` for a minimisation and `+1` for a maximisation; the same constraint has the
+  same dual for every kind and every method; a package wrapping NLP solvers tests the
+  native convention of each solver and its normalised output separately.
+
 ## [0.8.0] - 2026-10-21
 
 ### ✨ New Features
