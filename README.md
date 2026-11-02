@@ -61,7 +61,7 @@ examples stay generic (no package-specific symbols).
 6. **Structured errors.** Seven typed exceptions, picked by a sharp rule.
    → `EXC1`–`EXC5`
 7. **Type stability by default — and enforced.** Verified with JET, locked in by
-   `@inferred` and allocation guards, on the hot path only. → `TYP8`, `PERF1`–`PERF6`
+   `@inferred` and allocation guards, on the hot path only. → `TYP8`, `PERF1`–`PERF7`
 8. **Everything is documented.** A docstring on every symbol, fixed templates,
    safe examples. → `DOC1`–`DOC8`
 9. **Tests: module + callable function + everything qualified.** → `TST1`–`TST8`
