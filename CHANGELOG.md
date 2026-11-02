@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### ✨ New Features
+
+- `PERF7`, in [`rules/performance.md`](rules/performance.md): a collection of
+  callables on the hot path is stored in a concretely-typed tuple and applied by
+  static unrolling (`@generated`), with the measured table of what each shortcut
+  actually costs (abstractly-typed vector, plain loop over a heterogeneous
+  tuple, tuple recursion past the inference limit). Origin:
+  [CTModels.jl#496](https://github.com/control-toolbox/CTModels.jl/issues/496),
+  implemented in
+  [CTModels.jl#497](https://github.com/control-toolbox/CTModels.jl/pull/497).
+
 ## [0.9.0] - 2026-10-23
 
 ### ✨ New Features

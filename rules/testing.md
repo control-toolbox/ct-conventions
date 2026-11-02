@@ -217,7 +217,7 @@ Test.@test (BenchmarkTools.@ballocated SubA.accessor($obj)) == 0
 ```
 
 For the full methodology — JET setup, hot-path vs. setup-path classification, and the
-allocation-contract file — see [`PERF1`–`PERF6`](performance.md).
+allocation-contract file — see [`PERF1`–`PERF7`](performance.md).
 
 **Why.** A vague assertion passes on wrong results; a test that depends on another's
 state passes or fails by accident of order.

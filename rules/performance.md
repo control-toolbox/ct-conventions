@@ -6,7 +6,7 @@ JET, then regression guards locking in what was verified. For the *design* princ
 [`TYP8`](types.md#typ8--type-stability-by-default). For *running* tests, see
 [`method.md`](../method.md).
 
-Identifiers: `PERF1`–`PERF6` (see [`README.md`](../README.md#rule-identifiers)).
+Identifiers: `PERF1`–`PERF7` (see [`README.md`](../README.md#rule-identifiers)).
 
 ---
 
@@ -242,6 +242,89 @@ JET = "0.11"
 
 **Check.** `exact` (to be tooled): neither package appears in `[deps]` of
 `Project.toml`.
+
+---
+
+## PERF7 — A collection of callables is a concrete tuple, applied by static unrolling
+
+**Rule.** When a hot-path callable is assembled from a collection of functions —
+dynamics declared by coordinate ranges, merged trajectory components, composite
+constraints — two things must hold:
+
+1. The functions are stored in a **concretely-typed tuple** — `Tuple{F1,F2,…}`,
+   obtained by splatting the collection at build time (`tuple(parts...)`), which
+   preserves each element's concrete type in the tuple's type parameters. Never
+   `Vector{<:Function}`, `Dict{K,<:Function}` or `Vector{<:Tuple{…,<:Function}}`:
+   an abstract element type puts runtime dispatch back on the hot path.
+2. They are applied by **static unrolling** — a `@generated` call that emits one
+   statically-dispatched call per element. A plain `for` over the tuple is not
+   enough (the loop variable unions the element types); a `first`/`Base.tail`
+   recursion is not enough either (inference gives up past its recursion limit
+   and *silently* falls back to dispatch). Indexing the tuple at runtime
+   (`funs[i]`) is acceptable only while the union of element types is small
+   enough to split — verify with `JET.@report_opt`, do not assume.
+
+Setup-path collections are exempt
+([`PERF1`](#perf1--classify-hot-path-vs-setup-path-guard-the-hot-path-only)): a
+registry or builder read once per problem may stay a `Vector`/`Dict`.
+
+**Why.** Concrete storage is necessary but not sufficient — the *traversal* is
+what must resolve statically, and each shortcut is a measured failure mode, not
+a theoretical one (numbers from CTModels.jl#496, a dynamics assembled from `n`
+coordinate parts):
+
+| Storage / traversal | Allocations per call |
+| --- | --- |
+| `Vector{Tuple{UnitRange{Int},Function}}` + `for` | ~96 B × n |
+| concrete tuple + plain `for` | ~40–96 B × n |
+| concrete tuple + `first`/`Base.tail` recursion | 0 B for n ≲ 50, ~100 kB at n = 64 |
+| concrete tuple + `@generated` unroll | **0 B at every n** |
+
+The recursion row is the trap: it looks like the simple, codegen-free fix, it
+*is* correct at small `n`, and it degrades silently exactly where inference
+stops — the kind of conditional invariant PERF1 says must not exist on the hot
+path.
+
+✅
+
+```julia
+struct CompositeF{P} <: Function
+    parts::P    # concrete tuple of (range, f!) pairs
+end
+
+@generated function (f::CompositeF{P})(val, t, x, u, v) where {P}
+    calls = [
+        :(f.parts[$i][2](@view(val[f.parts[$i][1]]), t, x, u, v)) for
+        i in 1:fieldcount(P)
+    ]
+    return quote
+        $(calls...)
+        return nothing
+    end
+end
+```
+
+❌
+
+```julia
+struct CompositeF
+    parts::Vector{Tuple{UnitRange{Int},Function}}   # abstract element type
+end
+
+function (f::CompositeF)(val, t, x, u, v)
+    for (rg, f!) in f.parts          # dynamic dispatch; the view boxes
+        f!(@view(val[rg]), t, x, u, v)
+    end
+    return nothing
+end
+```
+
+**Check.** `signal` (to be tooled): fields typed `Vector{<:Function}`,
+`Dict{<:Any,<:Function}` or `Vector{<:Tuple{…,<:Function}}` on a callable, and
+loops over them — a finding says where to look; setup-path collections are legal
+(PERF1). Verification is the usual hot-path pair: `JET.@test_opt` on the
+composite call (PERF2, PERF4) and a `@ballocated` guard comparing it to the
+monolithic equivalent (PERF5).
 
 ---
 
