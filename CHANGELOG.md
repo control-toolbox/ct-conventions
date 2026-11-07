@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### ✨ New Features
+
+- `SITE13` tightened: `make.jl` takes the deploy decision once, with the preview label
+  (`Documenter.deploy_folder(…; push_preview)`), passes it to `MarkdownVitepress` as
+  `deploy_decision`, and calls `deploydocs` only when `deploy_decision.all_ok`. Without it,
+  DocumenterVitepress decides with `push_preview=true` hard-coded, so every pull request
+  without the `documentation push preview` label was built for `previews/PR<n>` and
+  announced a deployment that `deploydocs` then refused. Origin:
+  [OptimalControlProblems.jl#410](https://github.com/control-toolbox/OptimalControlProblems.jl/issues/410),
+  fixed in
+  [OptimalControlProblems.jl#411](https://github.com/control-toolbox/OptimalControlProblems.jl/pull/411).
+
 ## [0.10.0] - 2026-11-02
 
 ### ✨ New Features
