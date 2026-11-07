@@ -477,11 +477,12 @@ the format used when Plots saves to a file path, not how Documenter captures the
 
 ---
 
-## SITE13 — Deploy on stable tags only, guard `deploydocs`, previews on request
+## SITE13 — Deploy on stable tags only, one deploy decision, previews on request
 
-**Rule.** The documentation workflow triggers on stable tags only, `make.jl` calls
-`deploydocs` only when bases were built, and a pull request deploys its preview only when
-it carries the `documentation push preview` label.
+**Rule.** The documentation workflow triggers on stable tags only; `make.jl` takes the
+deploy decision once, with the preview label, gives it to `MarkdownVitepress`, and calls
+`deploydocs` only when that decision says to deploy and bases were built; a pull request
+deploys its preview only when it carries the `documentation push preview` label.
 
 ```yaml
 # .github/workflows/Documentation.yml
@@ -507,15 +508,33 @@ jobs:
 
 ```julia
 # docs/make.jl
+push_preview = get(ENV, "DOCUMENTER_PUSH_PREVIEW", "false") == "true"
+deploy_decision = Documenter.deploy_folder(
+    Documenter.auto_detect_deploy_system();
+    repo=repo_url, devbranch="main", devurl="dev", push_preview=push_preview,
+)
+
+makedocs(;
+    format=DocumenterVitepress.MarkdownVitepress(;
+        repo=repo_url, devbranch="main", devurl="dev", deploy_decision=deploy_decision,
+    ),
+    ...,
+)
+
 bases_file = joinpath(@__DIR__, "build", "bases.txt")
-if isfile(bases_file)
-    DocumenterVitepress.deploydocs(;
-        repo=repo_url * ".git",
-        devbranch="main",
-        push_preview=get(ENV, "DOCUMENTER_PUSH_PREVIEW", "false") == "true",
-    )
-else
+if !deploy_decision.all_ok
+    reason = if get(ENV, "GITHUB_EVENT_NAME", "") == "pull_request" && !push_preview
+        "no preview requested (label `documentation push preview` absent)"
+    else
+        "the deployment criteria above are not met"
+    end
+    @info "Skipping deployment: $(reason)."
+elseif !isfile(bases_file)
     @info "Skipping deployment: no bases were built (prerelease with existing higher stable release)."
+else
+    DocumenterVitepress.deploydocs(;
+        repo=repo_url * ".git", devbranch="main", push_preview=push_preview,
+    )
 end
 ```
 
@@ -537,12 +556,24 @@ written. The guard is a belt-and-suspenders safeguard: if `makedocs` built 0 bas
 reason), the CI job completes cleanly instead of crashing at `deploydocs`.
 
 A hardcoded `push_preview=true` deploys every PR build, which fills `gh-pages` with
-`previews/PR<n>` directories nobody looks at. `opened` is left out of the PR `types`: a
+`previews/PR<n>` directories nobody looks at.
+
+`MarkdownVitepress` decides where the site goes **during `makedocs`**, before `deploydocs`
+runs: it builds the site for the base of that decision (`dev`, `v1.2.3`,
+`previews/PR<n>`). Given no `deploy_decision`, it computes one with `push_preview=true`
+hard-coded (DocumenterVitepress 0.3). A pull request without the preview label was then
+built for `previews/PR<n>`, logged `Deploying: ✔` and `Deploying docs for base
+"previews/PR<n>"`, and `deploydocs`, which reads the label, refused it: a deployment
+announced on every pull request that never happens
+([OptimalControlProblems.jl#410](https://github.com/control-toolbox/OptimalControlProblems.jl/issues/410)).
+One decision, taken with the label and passed to both, builds that pull request at the root
+and says that no preview was requested. `opened` is left out of the PR `types`: a
 PR created with its labels emits both `opened` and `labeled`, which would build twice.
 
 **Check.** `exact` (to be tooled): tag filter, PR `types` and `if:` guard in
-`Documentation.yml`; `bases.txt` guard and `DOCUMENTER_PUSH_PREVIEW` in `make.jl`;
-`DocPreviewCleanup.yml` present.
+`Documentation.yml`; `deploy_decision` computed from `DOCUMENTER_PUSH_PREVIEW` and passed
+to `MarkdownVitepress`, `deploydocs` guarded by `deploy_decision.all_ok` and `bases.txt`
+in `make.jl`; `DocPreviewCleanup.yml` present.
 
 ---
 
