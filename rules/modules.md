@@ -217,8 +217,17 @@ consistent with the `include` order.
 
 - **Submodule**: `export` for its public API; internals (`_helper`, `__default`)
   stay unexported and are reached via full qualification.
-- **Package (top-level)**: **no** `export`. Load submodules with `using .Submodule`;
-  users reach them via `Package.Submodule.sym`.
+- **Package (top-level)** depends on who loads the package:
+  - **Internal package** (`CTBase`, `CTModels`, `CTDirect`, `CTSolvers`, `CTFlows`,
+    `CTParser`…), loaded by other packages of the ecosystem: **no** `export`. Load
+    submodules with `using .Submodule`; users reach them via `Package.Submodule.sym`.
+  - **User-facing package** (`OptimalControl`, `OptimalControlProblems`…), loaded by
+    end users with `using Package`: the package **exports its user API**, the names a
+    user writes unqualified in a script. Each of them is defined in a submodule (and
+    exported by it) or re-exported from a dependency; internals stay unexported and
+    qualified. The package's `AGENTS.md` states that it is user-facing.
+
+Internal package:
 
 ```julia
 module MyPackage
@@ -238,11 +247,33 @@ using MyPackage.Systems          # opt-in: brings Systems exports into scope
 AbstractThing                    # unqualified, the user's choice
 ```
 
-**Why.** Loading the package never pollutes the user's scope; bringing a submodule's
-API into scope is the user's explicit choice.
+User-facing package:
 
-**Check.** `exact` (to be tooled): the package module exports nothing
-(`names(MyPackage)` is only the module itself).
+```julia
+module MyApp
+include(joinpath(@__DIR__, "Core", "Core.jl"));       using .Core
+include(joinpath(@__DIR__, "Systems", "Systems.jl")); using .Systems
+export build_thing, AbstractThing   # the user API, each exported by its submodule
+end
+```
+
+```julia
+using MyApp                      # the user API is in scope
+thing = build_thing()            # unqualified
+MyApp.Core._helper               # internals stay qualified
+```
+
+**Why.** An internal package is a building block: loading it must never pollute the
+scope of the package that loads it, and bringing a submodule's API into scope is an
+explicit choice. A user-facing package is the entry point of end users: `using
+OptimalControl` must give them what they need to write a script, without qualification.
+The two-level split still holds inside it: the top level only gathers the user API, and
+every exported name has a home.
+
+**Check.** `exact` (to be tooled): for an internal package, the package module exports
+nothing (`names(MyPackage)` is only the module itself); for a user-facing package, every
+name it exports is exported by one of its submodules or re-exported from a dependency,
+and none starts with `_`.
 
 ---
 

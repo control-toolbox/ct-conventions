@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### 🛠 Enhancements
+
+- `MOD8`, in [`rules/modules.md`](rules/modules.md): the top-level rule now depends on
+  who loads the package. An internal package (`CTBase`, `CTModels`…) still exports
+  nothing at top level; a user-facing package (`OptimalControl`,
+  `OptimalControlProblems`…) exports its user API, each name exported by a submodule or
+  re-exported from a dependency, and says so in its `AGENTS.md`. This records the
+  practice of the user-facing packages, which the rule did not allow.
+
 ## [0.11.0] - 2026-11-07
 
 ### ✨ New Features
