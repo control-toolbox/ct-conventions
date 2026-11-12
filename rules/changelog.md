@@ -3,7 +3,7 @@
 How changes are tracked and communicated. For version numbering, see
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-Identifiers: `CHG1`–`CHG5` (see [`README.md`](../README.md#rule-identifiers)).
+Identifiers: `CHG1`–`CHG6` (see [`README.md`](../README.md#rule-identifiers)).
 
 ---
 
@@ -81,8 +81,9 @@ Omit sections that have nothing to say. The `### ✅ Compatibility` footer is
 **Why.** One format across the ecosystem: a reader finds the same sections in the same
 order in every package, and the footer answers "can I upgrade?" at a glance.
 
-**Check.** `exact` (to be tooled): header, entry headings, section names and order,
-`✅ Compatibility` last in every entry.
+**Check.** `exact`: for `## [Unreleased]`, the section names and order and `✅
+Compatibility` last are checked by `release.jl lint-changelog` ([`CHG6`](#chg6--unreleased-stays-in-format-checked-by-the-lint)).
+To be tooled: the header, and the older entries.
 
 ---
 
@@ -177,3 +178,33 @@ honest and immediately useful.
 
 **Check.** `exact` (to be tooled): a package with release tags but no `CHANGELOG.md`
 fails [`CHG1`](#chg1--two-companion-files).
+
+---
+
+## CHG6 — `[Unreleased]` stays in format, checked by the lint
+
+**Rule.** Between two releases, every change goes under `## [Unreleased]` of
+`CHANGELOG.md`, in the sections of [`CHG2`](#chg2--the-changelogmd-format), in their
+order, with `### ✅ Compatibility` last; and its counterpart in `BREAKING.md` goes under
+`## Unreleased` (a breaking change, with its migration block, `CHG3`) or
+`## Non-breaking note (Unreleased)` (`CHG4`). The release names them after the version.
+
+Whoever edits `CHANGELOG.md` or `BREAKING.md` — a person or an agent, in any pull request,
+a release or not — runs the lint and leaves it green:
+
+```bash
+julia --startup-file=no CTActions/scripts/release/release.jl lint-changelog .
+```
+
+The lint only reports. An agent fixes the format itself; where the fix needs a judgment
+(which section an entry belongs to, whether it is breaking), it decides and says so in its
+report. Older entries are never edited, whatever their format.
+
+**Why.** A release reads its version from `[Unreleased]`: a `### Breaking` instead of
+`### 💥 Breaking Changes` is not seen, and the version comes out wrong without any signal.
+A heading the tool cannot read below `[Unreleased]` merges an older entry into it. Caught in
+the pull request that writes it, a format problem costs a line; at the release, it stops it.
+
+**Check.** `exact`: `release.jl lint-changelog` (CTActions). The release gate reports its
+findings (ℹ️ `CHG2`) on every pull request that is not a release; `release.jl facts` and
+`request` refuse a release until it is green.
