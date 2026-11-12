@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### ✨ New Features
+
+- `CHG6`, in [`rules/changelog.md`](rules/changelog.md): `[Unreleased]` stays in the format
+  of `CHG2`, with its counterpart under `## Unreleased` or `## Non-breaking note
+  (Unreleased)` in `BREAKING.md`; whoever edits these files, a person or an agent, in any
+  pull request, runs `release.jl lint-changelog` (CTActions) and leaves it green. An agent
+  fixes the format itself and reports the judgments it made. Origin: the release of
+  CTParser 0.9.6, where a section out of order was found, and a format error would have
+  given a wrong version without any signal. `CHG2`'s check is now partly tooled.
+
 ## [0.12.0] - 2026-11-11
 
 ### 🛠 Enhancements
