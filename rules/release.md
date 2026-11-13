@@ -93,8 +93,10 @@ General and of ct-registry.
 only registry is General. No `[compat]` bound, of a dependency or of a weak dependency, is
 satisfied by betas only.
 
-**Why.** The CI of the packages uses ct-registry (`use_ct_registry: true`), so it passes
-with a beta dependency. General's AutoMerge rejects such a release, after it is tagged.
+**Why.** The CI of the packages uses ct-registry (`use_ct_registry: true`), so it would pass
+with a beta dependency, except on a pull request that sets a stable version: there the
+`add-ct-registry` action adds nothing. General's AutoMerge rejects such a release, after it
+is tagged; the gate catches it before.
 
 **Check.** `exact` (to be tooled): the CTActions workflow that resolves the package from a
 fresh depot holding General only, run on every pull request that sets a stable version.
