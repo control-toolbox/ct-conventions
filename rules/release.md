@@ -126,12 +126,21 @@ commit, since the bot registers the head of `main` when asked on an issue. It is
 request, a commit message, a GitHub release or a quote, and never for a beta. Prose that
 needs to refer to it says "the Registrator mention".
 
+The bot takes the comment of a **public member** of the organization, not of a GitHub App.
+A mention it **refuses** (it answers without a link to a pull request of General) has
+registered nothing: it does not count, and the comment is posted once more, by a person.
+When a person must post it, the text handed to them writes the name with an apostrophe
+(`@'JuliaRegistrator`), which they remove before posting: written as is, even in a quote or
+a code block, it would trigger the bot.
+
 **Why.** The bot reacts to its mention wherever it appears, in a description or in a code
 block, and every reaction is a registration attempt: an issue opened with the mention in
-its description is registered before its notes are final.
+its description is registered before its notes are final. A refusal is no registration,
+so it cannot make a second one; counting it would forbid the one comment that works.
 
-**Check.** `exact`: the release issue and the release commit hold one mention, in a
-comment; no pull request mentions the bot, in its text or its commit messages.
+**Check.** `exact`: the release issue and the release commit hold one live mention (not
+counting the answers of the bot without a pull request of General), in a comment; no pull
+request mentions the bot, in its text or its commit messages.
 
 ---
 
