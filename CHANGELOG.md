@@ -17,6 +17,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   CTParser 0.9.6, where a section out of order was found, and a format error would have
   given a wrong version without any signal. `CHG2`'s check is now partly tooled.
 
+### 🛠 Enhancements
+
+- `REL6`, in [`rules/release.md`](rules/release.md): the bot takes the comment of a public
+  member of the organization, not of a GitHub App. A mention it refuses (an answer without
+  a pull request of General) registered nothing and does not count; the text handed to a
+  person writes the name with an apostrophe, which they remove before posting. Origin: the
+  release of CTParser 0.9.6, where the App's comment was refused and a person posted it
+  (CTActions#155).
+
 ## [0.12.0] - 2026-11-11
 
 ### 🛠 Enhancements
