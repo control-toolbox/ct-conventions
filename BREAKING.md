@@ -5,7 +5,7 @@ sections, or rule changes that require existing packages to adapt. Each entry co
 with a migration block, as described in
 [`CHG3`](rules/changelog.md#chg3--breaking-entries-appear-in-both-files-with-a-migration-block).
 
-## Non-breaking note (Unreleased)
+## Non-breaking note (0.14.0)
 
 - **`SITE18`: the header of `docs/make.jl` gives `julia --project=docs docs/make.jl`.**
   A package whose header says `julia --project=. docs/make.jl`, or gives no command,

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.14.0] - 2026-11-14
+
 ### 🛠 Enhancements
 
 - `SITE18`, in [`rules/site.md`](rules/site.md): the documentation is built with
