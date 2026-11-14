@@ -66,7 +66,8 @@ listed kinds, in the listed order.
 ## MOD3 — No `import`
 
 **Rule.** `import` is **not used anywhere** in the ecosystem — sources, tests, and
-documentation cells alike. Every dependency comes into scope with `using`, and method
+documentation cells alike — except in the import layer of a user-facing package (see
+the exception below). Every dependency comes into scope with `using`, and method
 extensions are therefore always written qualified.
 
 **Why.** The two keywords have almost the same syntax and almost the same reach,
@@ -109,11 +110,40 @@ This follows [Blue Style](https://github.com/invenia/BlueStyle#module-imports), 
 prefers `using` over `import` "to ensure that extension of a function is always explicit
 and on purpose"; the ecosystem rule additionally drops Blue Style's `import` escape hatch.
 
+**Exception: the import layer of a user-facing package.** A user-facing package
+([`MOD8`](#mod8--two-level-exports)) that builds its API from the submodules of other
+packages keeps that construction in **one folder**, named in its `AGENTS.md`
+(OptimalControl.jl: `src/imports/`). That folder uses `import`:
+
+```julia
+@reexport import CTModels.Models: constraint, constraints   # exported: constraint(ocp, :c)
+import CTModels.Models: Model                               # qualified: OptimalControl.Model
+import CTSolvers.Solvers: Ipopt, MadNLP                     # qualified: OptimalControl.Ipopt
+import CTBase.Exceptions: IncorrectArgument                 # qualified: OptimalControl.IncorrectArgument
+```
+
+- `@reexport import Pkg.Sub: sym` for the names the package exports;
+- `import Pkg.Sub: sym` for the names it binds **without exporting** them, reached as
+  `Package.sym`: strategies named after a package (`Ipopt`), exceptions, types used in
+  signatures, kept out of `using Package` to avoid clashes.
+
+The folder **only binds names**: it defines no method, so the trap above (an extension
+with no visible origin) cannot occur there. Everywhere else in the package, `MOD3` and
+[`MOD4`](#mod4--qualified-external-imports) apply.
+
+The exception exists because no allowed `using` form binds these names. They live in
+submodules: `using Pkg: sym` finds only top-level names of `Pkg`, and the dotted
+`using Pkg.Sub: sym` is forbidden by `MOD4`. The remaining workaround, `using Pkg: Sub`
+then `const sym = Sub.sym`, turns every import into a binding of the package itself: one
+`const` per name to maintain, and introspection (`names(…; imported=true)`, Documenter
+bindings) changes.
+
 **Check.** `exact` when implemented by a repository guard: scan every tracked
 source, test and documentation file, reject each forbidden line, and report every
 violation with its file path, line number and source text. A guard may aggregate
 the result into one test assertion, but it must preserve the per-line diagnostics.
-Measure meanwhile:
+The guard of a user-facing package exempts its import layer, and that folder only
+(OptimalControl.jl: `test/suite/meta/test_no_import.jl`). Measure meanwhile:
 
 ```bash
 grep -rnE '^\s*import\s|^\s*using\s+[A-Za-z_][A-Za-z_0-9]*\.' \
