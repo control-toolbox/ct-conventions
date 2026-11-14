@@ -99,11 +99,12 @@ julia --project=@. -e 'using Pkg; Pkg.test("MyPackage"; coverage=true); include(
 From the package root:
 
 ```bash
-julia --project=. docs/make.jl 2>&1 | tee /tmp/<pkg>_docs.log
+julia --project=docs docs/make.jl 2>&1 | tee /tmp/<pkg>_docs.log
 ```
 
-`make.jl` prepends both `docs/` and the package root to `LOAD_PATH`; no `Pkg.develop`
-step is needed.
+`docs/` is the active project, as on CI, and `make.jl` appends the package root to
+`LOAD_PATH` so that `using MyPackage` finds the local package; no `Pkg.develop` step is
+needed ([`SITE18`](rules/site.md#site18--the-docs-environment-comes-first-built-with---projectdocs-root-appended)).
 
 ### Local preview
 
