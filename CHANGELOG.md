@@ -13,6 +13,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `julia --project=docs docs/make.jl`, the command of CI, and the header of
   `docs/make.jl` gives it. With `--project=.` the root is the active project and shadows
   `docs/` despite the `push!`. Origin: most headers said `--project=.` (#63).
+- `MOD3`, in [`rules/modules.md`](rules/modules.md): a user-facing package (`MOD8`) may
+  use `import` in one folder, its import layer, named in its `AGENTS.md`:
+  `@reexport import Pkg.Sub: sym` for the names it exports, `import Pkg.Sub: sym` for the
+  names it binds without exporting them. The folder only binds names, and the guard
+  exempts it alone. Origin: OptimalControl.jl's `src/imports/`, which binds names such as
+  `OptimalControl.Ipopt` that no allowed `using` form reaches (#62).
 
 ### 📚 Documentation
 
@@ -22,8 +28,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### ✅ Compatibility
 
-- **No breaking changes**: rule identifiers unchanged; a package adapts by fixing one
-  comment line in `docs/make.jl`. See [BREAKING.md](BREAKING.md).
+- **No breaking changes**: rule identifiers unchanged; `SITE18` asks a package to fix
+  one comment line in `docs/make.jl`, and `MOD3` only relaxes. See
+  [BREAKING.md](BREAKING.md).
 
 ## [0.13.0] - 2026-11-13
 
