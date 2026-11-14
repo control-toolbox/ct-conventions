@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   names it binds without exporting them. The folder only binds names, and the guard
   exempts it alone. Origin: OptimalControl.jl's `src/imports/`, which binds names such as
   `OptimalControl.Ipopt` that no allowed `using` form reaches (#62).
+- `PERF5`, in [`rules/performance.md`](rules/performance.md): how to write the raw side
+  of a wrapper-vs-raw allocation guard, so that the compiler cannot elide on it what the
+  wrapper performs: inputs interpolated on both sides, one specialised function for the
+  whole sequence, a shared `const` input when the wrapper must copy. Origin: two guards of
+  CTModels' `test/suite/meta/test_performance.jl` that measured a comparison artifact
+  (#53).
 
 ### 📚 Documentation
 
@@ -29,8 +35,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### ✅ Compatibility
 
 - **No breaking changes**: rule identifiers unchanged; `SITE18` asks a package to fix
-  one comment line in `docs/make.jl`, and `MOD3` only relaxes. See
-  [BREAKING.md](BREAKING.md).
+  one comment line in `docs/make.jl`, `MOD3` only relaxes, and `PERF5` only adds
+  guidance. See [BREAKING.md](BREAKING.md).
 
 ## [0.13.0] - 2026-11-13
 

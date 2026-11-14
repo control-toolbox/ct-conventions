@@ -210,6 +210,43 @@ Note the `$` interpolation: without it, `@ballocated` benchmarks global-variable
 access and reports spurious allocations. These guards run fast (allocation counts
 need almost no sampling) and belong in the normal suite — no separate CI.
 
+**Writing the raw side.** A wrapper-vs-raw guard is only as good as its raw side: the
+raw equivalent must not let the compiler fold or elide what the wrapper provably
+performs across its call boundary, or the guard measures an optimiser artifact, not a
+defect. Three traps, all met in CTModels:
+
+- **Literals.** `$`-interpolate the inputs on **both** sides. A bare literal (`0.5`,
+  `[2]`) on the raw side lets the compiler fold the raw expression to a constant with
+  no runtime allocation, while the interpolated wrapper call is really measured.
+- **Stitched calls.** Write the raw side as **one specialised function** performing
+  the whole sequence, not as several global calls benchmarked together: a single
+  method body gets escape analysis, separate calls do not (160 B measured against the
+  wrapper's real 80 B).
+- **Fresh-vector inputs.** When the wrapper must copy its input, feed both sides a
+  **shared `const`** input. With an input built fresh on each call, the raw side may
+  return it uncopied (a fresh array cannot escape), while the wrapper's call boundary
+  cannot elide the copy (`160 == 80`).
+
+```julia
+# TOP-LEVEL
+const _BASE = [0.0, 0.0, 0.0]           # shared: the copy is required on both sides
+_base_raw(t) = _BASE
+function _merged_raw(t)                  # ONE function for the whole sequence
+    v = collect(_base_raw(t))
+    v[1] = sin(t)
+    return v
+end
+
+Test.@testset "Zero-overhead wrappers" begin
+    t = 0.5                              # interpolated on both sides
+    Test.@test (BenchmarkTools.@ballocated $merged($t)) ==
+        (BenchmarkTools.@ballocated _merged_raw($t))
+end
+```
+
+Check at the REPL that the raw side allocates what you expect before freezing the
+guard.
+
 **Why.** Type stability is necessary but not sufficient: a change can stay fully
 inferable yet start allocating (a stray `collect`, a boxed closure, an abstract
 field). Allocation counts — unlike wall-clock time — are **deterministic**: no
