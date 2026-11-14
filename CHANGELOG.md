@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### 🛠 Enhancements
+
+- `SITE18`, in [`rules/site.md`](rules/site.md): the documentation is built with
+  `julia --project=docs docs/make.jl`, the command of CI, and the header of
+  `docs/make.jl` gives it. With `--project=.` the root is the active project and shadows
+  `docs/` despite the `push!`. Origin: most headers said `--project=.` (#63).
+
+### ✅ Compatibility
+
+- **No breaking changes**: rule identifiers unchanged; a package adapts by fixing one
+  comment line in `docs/make.jl`. See [BREAKING.md](BREAKING.md).
+
 ## [0.13.0] - 2026-11-13
 
 ### ✨ New Features

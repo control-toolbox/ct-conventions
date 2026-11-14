@@ -5,6 +5,12 @@ sections, or rule changes that require existing packages to adapt. Each entry co
 with a migration block, as described in
 [`CHG3`](rules/changelog.md#chg3--breaking-entries-appear-in-both-files-with-a-migration-block).
 
+## Non-breaking note (Unreleased)
+
+- **`SITE18`: the header of `docs/make.jl` gives `julia --project=docs docs/make.jl`.**
+  A package whose header says `julia --project=. docs/make.jl`, or gives no command,
+  fixes that comment; nothing else changes, and CI already builds with `--project=docs/`.
+
 ## Version 0.2.0 — the Handbook becomes ct-conventions
 
 - **Rules carry identifiers** and live in `rules/`; cite them by identifier
