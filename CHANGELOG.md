@@ -14,6 +14,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `docs/make.jl` gives it. With `--project=.` the root is the active project and shadows
   `docs/` despite the `push!`. Origin: most headers said `--project=.` (#63).
 
+### 📚 Documentation
+
+- [`method.md`](method.md), "Build command": the docs are built with
+  `julia --project=docs docs/make.jl`, and `make.jl` appends the package root to
+  `LOAD_PATH` — the page said `--project=.` and "prepends", against `SITE18`.
+
 ### ✅ Compatibility
 
 - **No breaking changes**: rule identifiers unchanged; a package adapts by fixing one
