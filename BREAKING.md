@@ -5,6 +5,14 @@ sections, or rule changes that require existing packages to adapt. Each entry co
 with a migration block, as described in
 [`CHG3`](rules/changelog.md#chg3--breaking-entries-appear-in-both-files-with-a-migration-block).
 
+## Non-breaking note (Unreleased)
+
+- **`SITE4`: a sibling's local build is read only with `CT_LOCAL_INVENTORIES=true`.**
+  A `docs/make.jl` whose `InterLinks` entries list a sibling's
+  `docs/build/1/objects.inv` reads it only behind that variable (the `sibling_inventory`
+  helper of the rule). Builds without the variable resolve against the published
+  inventories, as on CI; the self-reference of `SITE5` is unchanged.
+
 ## Non-breaking note (0.14.0)
 
 - **`SITE18`: the header of `docs/make.jl` gives `julia --project=docs docs/make.jl`.**

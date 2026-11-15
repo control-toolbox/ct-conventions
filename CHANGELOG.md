@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### 🛠 Enhancements
+
+- `SITE4`, in [`rules/site.md`](rules/site.md): a sibling package resolves against its
+  published inventory; its local build is read first only on request, with
+  `CT_LOCAL_INVENTORIES=true`, and the build then names that inventory and its version.
+  `InterLinks` takes the first source that loads for the whole package, so a stale local
+  build shadowed the published inventory. Origin: four `@extref`s of OptimalControl.jl
+  broken by old builds of CTModels and CTFlows next to it (#69).
+
+### ✅ Compatibility
+
+- **No breaking changes**: rule identifiers unchanged; a package that reads a sibling's
+  local build puts it behind `CT_LOCAL_INVENTORIES`. See [BREAKING.md](BREAKING.md).
+
 ## [0.14.0] - 2026-11-14
 
 ### 🛠 Enhancements

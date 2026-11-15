@@ -191,30 +191,60 @@ makedocs(; plugins=[links], ...)   # makes [`OtherPkg.Sub.Sym`](@extref) resolve
 The third element is a fallback inventory *location* — `InterLinks` tries each entry in
 order and uses the first reachable one. It can be a URL or a local file path.
 
-### Local fallback for sibling packages (cross-repo development)
+### Sibling's local build: only on request (cross-repo development)
 
+By default, a sibling package resolves against its **published** inventory, as on CI.
 While developing across sibling repos — e.g. `Pkg.develop`-ing a sibling package to
-verify an in-progress change before it is released — point that package's `InterLinks`
-entry at the sibling's own local build output instead of only its published URL, so
-cross-package `@extref`s are verifiable without a release:
+verify an in-progress change before it is released — the sibling's own local build can
+be read first, so cross-package `@extref`s are verifiable without a release. That is
+done **only on request**, with the environment variable `CT_LOCAL_INVENTORIES=true`,
+and the build then says which local inventory it reads, and its version:
 
 ```julia
-"OtherPkg" => (
-    "https://.../OtherPkg.jl/stable/",
-    joinpath(@__DIR__, "..", "..", "OtherPkg.jl", "docs", "build", "1", "objects.inv"),
-    "https://.../OtherPkg.jl/stable/objects.inv",
-),
+# Sibling inventories: the published one; with CT_LOCAL_INVENTORIES=true, the sibling's
+# local build first (cross-repo development before a release).
+const LOCAL_INVENTORIES = get(ENV, "CT_LOCAL_INVENTORIES", "false") == "true"
+
+function sibling_inventory(dir_name::AbstractString, base_url::AbstractString)
+    remote = (base_url, base_url * "objects.inv")
+    LOCAL_INVENTORIES || return remote
+    local_inv = joinpath(@__DIR__, "..", "..", dir_name, "docs", "build", "1", "objects.inv")
+    isfile(local_inv) || return remote
+    version = "?"
+    for line in Iterators.take(eachline(local_inv), 4)
+        startswith(line, "# Version: ") && (version = chopprefix(line, "# Version: "))
+    end
+    @info "InterLinks: local inventory of $dir_name (version $version)" local_inv
+    return (base_url, local_inv, base_url * "objects.inv")
+end
+
+links = InterLinks(
+    "OtherPkg" => sibling_inventory("OtherPkg.jl", "https://.../OtherPkg.jl/stable/"),
+)
 ```
 
-Same "first reachable wins" mechanism — falls back to the published inventory once the
-sibling's local build doesn't exist (e.g. in CI, where sibling repos aren't checked out
-side by side).
+```bash
+CT_LOCAL_INVENTORIES=true julia --project=docs docs/make.jl
+```
+
+The switch is a variable of its own, never `CI`: with `CI` set (whatever its value),
+DocumenterVitepress builds the site for the deploy prefix (`/MyPackage.jl/`) instead of
+`/`, and a local preview served from `docs/build/1` returns 404 for every asset.
 
 **Why.** Cross-references resolve at build time; an `@extref` without an inventory is a
-broken link.
+broken link. `InterLinks` takes the first source that loads **for the whole package**:
+it does not fall back symbol by symbol. A sibling's local build that exists but is old
+therefore shadows the published inventory, and every symbol added since breaks the
+build, with nothing pointing at the stale file. Seen on OptimalControl.jl, which read
+the local builds unconditionally: an old `../CTModels.jl/docs/build/1` (0.19.7, against
+0.21.1 published) and `../CTFlows.jl/docs/build/1` (0.18.0-beta, against 0.18.3) broke
+four `@extref`s of a plain local build that CI built cleanly (#69). A
+package's self-reference ([`SITE5`](#site5--self-reference-for-extensible-generics)) is
+not concerned: every build regenerates its own inventory.
 
 **Check.** `exact` (to be tooled): every package named in an `@extref` target has an
-`InterLinks` entry.
+`InterLinks` entry; a sibling's local `objects.inv` appears in `make.jl` only behind
+`CT_LOCAL_INVENTORIES`.
 
 ---
 
