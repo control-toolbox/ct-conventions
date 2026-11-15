@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### 🛠 Enhancements
 
+- `SITE19`, in [`rules/site.md`](rules/site.md): every column of a documentation table
+  states its alignment (`:---`, `:-:`, `---:`), in the pages, in generated pages and in
+  docstrings. Julia's Markdown parser reads a bare `---` as right-aligned, and
+  DocumenterVitepress renders it so. Replaces the note "Tables are right-aligned by
+  default". Origin: 28 right-aligned tables on OptimalControl.jl
+  (control-toolbox/OptimalControl.jl#1063).
+- Notes on the VitePress backend: the shared stylesheet
+  `control-toolbox.org/assets/css/vitepress-documentation.css` is where a fix for every
+  site goes. It now drops the padding of inline math and the outer margins of the
+  paragraphs of list items
+  (control-toolbox/control-toolbox.github.io#90); the template's padding rule left in a
+  local `style.css` is inert and is removed when the site is next touched.
 - `SITE4`, in [`rules/site.md`](rules/site.md): a sibling package resolves against its
   published inventory; its local build is read first only on request, with
   `CT_LOCAL_INVENTORIES=true`, and the build then names that inventory and its version.
@@ -18,8 +30,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### ✅ Compatibility
 
-- **No breaking changes**: rule identifiers unchanged; a package that reads a sibling's
-  local build puts it behind `CT_LOCAL_INVENTORIES`. See [BREAKING.md](BREAKING.md).
+- **No breaking changes**: existing rule identifiers unchanged. A package that reads a
+  sibling's local build puts it behind `CT_LOCAL_INVENTORIES`; a table written with
+  `| --- |` is fixed when its page or docstring is next touched (`SITE19`). See
+  [BREAKING.md](BREAKING.md).
 
 ## [0.14.0] - 2026-11-14
 

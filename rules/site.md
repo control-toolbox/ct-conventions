@@ -5,7 +5,7 @@ How docstrings become a published site via Documenter.jl and
 [`docstrings.md`](docstrings.md) (what to write *inside* docstrings). For *building*
 the docs (draft-first workflow, local preview), see [`method.md`](../method.md).
 
-Identifiers: `SITE1`–`SITE17` (see [`README.md`](../README.md#rule-identifiers)).
+Identifiers: `SITE1`–`SITE19` (see [`README.md`](../README.md#rule-identifiers)).
 
 ## Backend
 
@@ -771,6 +771,32 @@ its header gives `julia --project=docs docs/make.jl` (no `--project=.`).
 
 ---
 
+## SITE19 — Every table column states its alignment
+
+**Rule.** In a Markdown table of the documentation, every cell of the delimiter row
+states its alignment: `:---` for text (left), `:-:` for a centred column, `---:` for a
+right-aligned one. A bare `---` is never written. This holds for the hand-written pages,
+for the pages a script generates (`api_reference.jl`, `@eval` blocks), and for the tables
+of docstrings, which the API reference renders.
+
+```markdown
+| Option | Default | `:adnlp` |
+| :--- | :--- | :-: |
+| `grid_size` | `250` | ✅ |
+```
+
+**Why.** Julia's Markdown parser, which Documenter uses, reads a bare `---` as
+right-aligned, and DocumenterVitepress writes that alignment as it is: every such column
+is rendered right-aligned, text included, on every site of the ecosystem. CSS cannot undo
+it, since the alignment is written on each cell and a deliberate `---:` looks the same.
+Found on OptimalControl.jl, where 28 tables of 21 pages, and two of the generated API
+levels page, were right-aligned (control-toolbox/OptimalControl.jl#1063).
+
+**Check.** `exact` (to be tooled): no delimiter row of a table in `docs/src/**/*.md`, in
+the scripts of `docs/`, or in a docstring has a cell without a colon (`| --- |`).
+
+---
+
 ## Notes on the VitePress backend (no identifier)
 
 Know-how about the tool rather than conventions of the ecosystem. Migrating a package
@@ -891,9 +917,25 @@ from Documenter to DocumenterVitepress is a separate recipe, in
   </style>
   ```
 
-- **Tables are right-aligned by default.** A Markdown table whose separator row has no
-  alignment (`| --- |`) is rendered with right-aligned columns. Write the alignment
-  explicitly, `| :--- |` for text.
+- **The shared stylesheet.** Every DocumenterVitepress site of the ecosystem loads
+  `https://control-toolbox.org/assets/css/vitepress-documentation.css` (a `head` link in
+  `config.mts`; source in
+  [control-toolbox.github.io](https://github.com/control-toolbox/control-toolbox.github.io/tree/main/assets/css)),
+  next to its own `docs/src/.vitepress/theme/style.css`. A fix that holds for every site
+  goes to the shared stylesheet; the local one keeps what is specific to the site. Two
+  defaults of the theme template are corrected there, and a site does not restore them
+  locally:
+  - **inline math gets no padding.** The template pads every MathJax container by
+    `0.5rem`, so a line of text that holds a formula grows taller than the others; only
+    display math (`mjx-container[display="true"]`) keeps it. The template's
+    `padding: 0.5rem 0` on the bare `mjx-container` in the local `style.css` is inert and
+    is removed when the site is next touched;
+  - **lists read as lists.** DocumenterVitepress separates the items of every list by a
+    blank line, so each item is a paragraph with its margins; the outer margins of those
+    paragraphs are dropped.
+
+  The shared stylesheet is loaded live: a change reaches every site at once, its published
+  versions included, without a build. Test it on a copy of a published page first.
 
 - **Printed output is dropped when a block returns a value.** An `@example` block whose
   last expression is not `nothing` shows that value only; what the block printed (with
