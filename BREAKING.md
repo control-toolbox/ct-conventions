@@ -7,6 +7,10 @@ with a migration block, as described in
 
 ## Non-breaking note (Unreleased)
 
+- **`SITE19`: every table column states its alignment.** A table whose delimiter row
+  has a bare `---` is rendered right-aligned; write `:---` (or `:-:`, `---:`) when the
+  page or the docstring is next touched. Nothing else changes.
+
 - **`SITE4`: a sibling's local build is read only with `CT_LOCAL_INVENTORIES=true`.**
   A `docs/make.jl` whose `InterLinks` entries list a sibling's
   `docs/build/1/objects.inv` reads it only behind that variable (the `sibling_inventory`
