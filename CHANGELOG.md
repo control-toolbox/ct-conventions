@@ -19,8 +19,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `control-toolbox.org/assets/css/vitepress-documentation.css` is where a fix for every
   site goes. It now drops the padding of inline math and the outer margins of the
   paragraphs of list items
-  (control-toolbox/control-toolbox.github.io#90). The template's padding rule in a
-  local `style.css` stays: it gives display math its space.
+  (control-toolbox/control-toolbox.github.io#90) and the padding and margin of display
+  math (control-toolbox/control-toolbox.github.io#92). The template's padding rule in a
+  local `style.css` is then inert.
 - `SITE4`, in [`rules/site.md`](rules/site.md): a sibling package resolves against its
   published inventory; its local build is read first only on request, with
   `CT_LOCAL_INVENTORIES=true`, and the build then names that inventory and its version.
