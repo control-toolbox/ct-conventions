@@ -925,11 +925,15 @@ from Documenter to DocumenterVitepress is a separate recipe, in
   goes to the shared stylesheet; the local one keeps what is specific to the site. Two
   defaults of the theme template are corrected there, and a site does not restore them
   locally:
-  - **inline math gets no padding.** The template pads every MathJax container by
-    `0.5rem`, so a line of text that holds a formula grows taller than the others. The
-    shared rule (`mjx-container:not([display="true"])`) removes it from inline math only.
-    The template's `padding: 0.5rem 0` on the bare `mjx-container` in the local
-    `style.css` stays: it is what gives display math its space;
+  - **MathJax containers get no padding.** The template pads every MathJax container by
+    `0.5rem`, so a line of text that holds a formula grows taller than the others, and
+    MathJax's SVG output already adds `margin: .7em 0; padding: .3em 2px` around a display
+    formula: about 2em of blank above and below it. Two shared rules remove the padding,
+    `mjx-container:not([display="true"])` for inline math and `mjx-container[display="true"]`
+    for display math, which also loses its margin: the paragraphs space it. Both outrank
+    the bare `mjx-container` of the template, whatever the order the sheets load in, so
+    the template's `padding: 0.5rem 0` in a local `style.css` is inert, and a site drops it
+    (or at least its comment) when it next touches that file;
   - **lists read as lists.** DocumenterVitepress separates the items of every list by a
     blank line, so each item is a paragraph with its margins; the outer margins of those
     paragraphs are dropped.
