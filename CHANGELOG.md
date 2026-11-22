@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.15.0] - 2026-11-22
+
 ### 🛠 Enhancements
 
 - `SITE19`, in [`rules/site.md`](rules/site.md): every column of a documentation table
