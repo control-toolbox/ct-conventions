@@ -5,7 +5,7 @@ sections, or rule changes that require existing packages to adapt. Each entry co
 with a migration block, as described in
 [`CHG3`](rules/changelog.md#chg3--breaking-entries-appear-in-both-files-with-a-migration-block).
 
-## Non-breaking note (Unreleased)
+## Non-breaking note (0.15.0)
 
 - **`SITE19`: every table column states its alignment.** A table whose delimiter row
   has a bare `---` is rendered right-aligned; write `:---` (or `:-:`, `---:`) when the
